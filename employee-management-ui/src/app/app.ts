@@ -9,6 +9,6 @@ import { CommonModule } from '@angular/common';
   styleUrl: './app.css'
 })
 export class App {
-  protected readonly title = signal('Employee Management System');
+  protected readonly title = signal('Nova Employee Management System');
   protected readonly todayDate = new Date();
 }

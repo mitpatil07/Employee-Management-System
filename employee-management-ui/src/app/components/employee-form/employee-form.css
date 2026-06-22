@@ -2,33 +2,39 @@
 .form-container {
   display: flex;
   flex-direction: column;
-  gap: 1.5rem;
+  gap: 1.75rem;
   max-width: 800px;
   margin: 0 auto;
 }
 
 .back-link {
-  display: flex;
+  display: inline-flex;
   align-items: center;
   gap: 0.5rem;
   font-size: 0.875rem;
   color: var(--primary-color);
   text-decoration: none;
-  font-weight: 500;
+  font-weight: 600;
   margin-bottom: 0.75rem;
-  transition: transform 0.2s ease;
+  transition: var(--transition-smooth);
 }
 
 .back-link:hover {
   transform: translateX(-4px);
+  color: var(--primary-dark);
 }
 
 .form-card {
   background: var(--bg-card);
   border: 1px solid var(--border-color);
-  border-radius: 12px;
-  padding: 2rem;
+  border-radius: var(--border-radius);
+  padding: 2.25rem;
   box-shadow: var(--shadow-sm);
+  transition: var(--transition-smooth);
+}
+
+.form-card:hover {
+  box-shadow: var(--shadow-md);
 }
 
 @media (max-width: 600px) {
@@ -40,22 +46,23 @@
 .custom-form {
   display: flex;
   flex-direction: column;
-  gap: 1.5rem;
+  gap: 1.75rem;
 }
 
 .form-section-title {
   font-size: 1rem;
-  font-weight: 600;
+  font-weight: 700;
   color: var(--text-main);
   border-left: 4px solid var(--primary-color);
   padding-left: 0.75rem;
   margin-bottom: 0.25rem;
+  letter-spacing: -0.01em;
 }
 
 .form-grid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-  gap: 1.25rem;
+  gap: 1.5rem;
 }
 
 .form-group {
@@ -66,7 +73,7 @@
 
 .form-group label {
   font-size: 0.8125rem;
-  font-weight: 600;
+  font-weight: 700;
   color: var(--text-muted);
 }
 
@@ -78,7 +85,7 @@
 .form-divider {
   border: 0;
   border-top: 1px solid var(--border-color);
-  margin: 0.5rem 0;
+  margin: 0.75rem 0;
 }
 
 .form-actions {
@@ -87,20 +94,21 @@
   gap: 1rem;
   margin-top: 1rem;
   border-top: 1px solid var(--border-color);
-  padding-top: 1.5rem;
+  padding-top: 1.75rem;
 }
 
 .error-alert {
-  background-color: rgba(239, 68, 68, 0.1);
+  background-color: rgba(239, 68, 68, 0.08);
   color: rgb(220, 38, 38);
-  border: 1px solid rgba(239, 68, 68, 0.2);
-  border-radius: 8px;
-  padding: 1rem;
+  border: 1px solid rgba(239, 68, 68, 0.15);
+  border-radius: 10px;
+  padding: 1.15rem;
   margin-bottom: 1.5rem;
   display: flex;
   align-items: center;
   gap: 0.75rem;
   font-size: 0.875rem;
+  font-weight: 500;
 }
 
 .spinner-xs {
