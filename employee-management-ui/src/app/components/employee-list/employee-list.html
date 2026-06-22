@@ -1,0 +1,189 @@
+<div class="directory-container">
+  <div class="directory-header">
+    <div>
+      <h1>Employee Directory</h1>
+      <p class="subtitle">Search and manage all company personnel records</p>
+    </div>
+    <div>
+      <a routerLink="/employees/new" class="btn btn-primary">
+        <span class="material-symbols-outlined">person_add</span> Onboard Employee
+      </a>
+    </div>
+  </div>
+
+  <!-- Filters Panel -->
+  <div class="filters-card">
+    <div class="filters-grid">
+      <!-- Search Input -->
+      <div class="filter-item search-input-wrapper">
+        <label for="search">Search Personnel</label>
+        <div class="input-icon-wrapper">
+          <span class="material-symbols-outlined input-icon">search</span>
+          <input 
+            type="text" 
+            id="search" 
+            [(ngModel)]="search" 
+            (ngModelChange)="onSearchChange()" 
+            placeholder="Search by name, email..."
+            class="form-control with-icon"
+          />
+        </div>
+      </div>
+
+      <!-- Department Filter -->
+      <div class="filter-item">
+        <label for="departmentFilter">Filter Department</label>
+        <select 
+          id="departmentFilter" 
+          [(ngModel)]="selectedDept" 
+          (change)="onDepartmentChange()"
+          class="form-control"
+        >
+          <option [ngValue]="null">All Departments</option>
+          @for (dept of departments(); track dept.id) {
+            <option [value]="dept.id">{{ dept.name }}</option>
+          }
+        </select>
+      </div>
+
+      <!-- Designation Filter -->
+      <div class="filter-item">
+        <label for="designationFilter">Filter Designation</label>
+        <select 
+          id="designationFilter" 
+          [(ngModel)]="selectedDesig" 
+          (change)="loadEmployees()"
+          [disabled]="!selectedDept"
+          class="form-control"
+        >
+          <option [ngValue]="null">All Designations</option>
+          @for (desig of designations(); track desig.id) {
+            <option [value]="desig.id">{{ desig.title }}</option>
+          }
+        </select>
+      </div>
+
+      <!-- Clear Button -->
+      <div class="filter-item actions-align">
+        <button class="btn btn-outline full-width" (click)="clearFilters()">
+          <span class="material-symbols-outlined">filter_list_off</span> Reset
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Employee Table -->
+  @if (loading()) {
+    <div class="loading-state">
+      <div class="spinner"></div>
+      <p>Loading employee directory records...</p>
+    </div>
+  } @else if (error()) {
+    <div class="error-card">
+      <span class="material-symbols-outlined error-icon">warning</span>
+      <h3>Data Load Error</h3>
+      <p>{{ error() }}</p>
+      <button class="btn btn-outline" (click)="loadEmployees()">Try Again</button>
+    </div>
+  } @else {
+    <div class="directory-card">
+      <div class="table-container">
+        @if (employees().length === 0) {
+          <div class="no-records-state">
+            <span class="material-symbols-outlined large-icon">group_off</span>
+            <h3>No Records Found</h3>
+            <p>We couldn't find any employees matching your search or filters.</p>
+            <button class="btn btn-outline btn-sm" (click)="clearFilters()">Clear Filters</button>
+          </div>
+        } @else {
+          <table class="data-table">
+            <thead>
+              <tr>
+                <th>Name</th>
+                <th>Contact Details</th>
+                <th>Department</th>
+                <th>Designation</th>
+                <th>Date of Joining</th>
+                <th>Salary</th>
+                <th>Status</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody>
+              @for (emp of paginatedEmployees; track emp.id) {
+                <tr>
+                  <td>
+                    <div class="user-cell">
+                      <div class="avatar">{{ emp.firstName[0] }}{{ emp.lastName[0] }}</div>
+                      <div>
+                        <div class="font-semibold">{{ emp.firstName }} {{ emp.lastName }}</div>
+                        <div class="text-xs text-muted">ID: EMP-{{ emp.id }}</div>
+                      </div>
+                    </div>
+                  </td>
+                  <td>
+                    <div class="contact-details">
+                      <div class="contact-item">
+                        <span class="material-symbols-outlined text-xs">mail</span>
+                        <span>{{ emp.email }}</span>
+                      </div>
+                      @if (emp.phone) {
+                        <div class="contact-item">
+                          <span class="material-symbols-outlined text-xs">call</span>
+                          <span>{{ emp.phone }}</span>
+                        </div>
+                      }
+                    </div>
+                  </td>
+                  <td>{{ emp.departmentName || 'Not Assigned' }}</td>
+                  <td>{{ emp.designationTitle || 'Not Assigned' }}</td>
+                  <td>{{ emp.dateOfJoining | date:'mediumDate' }}</td>
+                  <td>${{ emp.salary | number:'1.0-0' }}/yr</td>
+                  <td>
+                    <span class="badge" 
+                      [class.badge-active]="emp.status === 'Active'" 
+                      [class.badge-inactive]="emp.status === 'Inactive'"
+                      [class.badge-terminated]="emp.status === 'Terminated'"
+                    >
+                      {{ emp.status }}
+                    </span>
+                  </td>
+                  <td>
+                    <div class="actions-cell">
+                      <a [routerLink]="['/employees/edit', emp.id]" class="btn-icon text-primary" title="Edit Employee">
+                        <span class="material-symbols-outlined">edit</span>
+                      </a>
+                      <button (click)="deleteEmployee(emp.id, emp.firstName + ' ' + emp.lastName)" class="btn-icon text-danger" title="Delete Employee">
+                        <span class="material-symbols-outlined">delete</span>
+                      </button>
+                    </div>
+                  </td>
+                </tr>
+              }
+            </tbody>
+          </table>
+        }
+      </div>
+
+      <!-- Pagination Footer -->
+      @if (employees().length > 0) {
+        <div class="pagination-footer">
+          <div class="pagination-info">
+            Showing <strong>{{ (currentPage - 1) * itemsPerPage + 1 }}</strong> to 
+            <strong>{{ showingTo }}</strong> of 
+            <strong>{{ employees().length }}</strong> employees
+          </div>
+          <div class="pagination-buttons">
+            <button class="btn btn-outline btn-sm btn-nav" (click)="prevPage()" [disabled]="currentPage === 1">
+              <span class="material-symbols-outlined">chevron_left</span> Previous
+            </button>
+            <span class="page-number">Page {{ currentPage }} of {{ totalPages }}</span>
+            <button class="btn btn-outline btn-sm btn-nav" (click)="nextPage()" [disabled]="currentPage === totalPages">
+              Next <span class="material-symbols-outlined">chevron_right</span>
+            </button>
+          </div>
+        </div>
+      }
+    </div>
+  }
+</div>

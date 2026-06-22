@@ -1,0 +1,184 @@
+<div class="dashboard-container">
+  <div class="dashboard-header">
+    <div>
+      <h1>Dashboard Overview</h1>
+      <p class="subtitle">Real-time insight into your workforce</p>
+    </div>
+    <div class="header-actions">
+      <a routerLink="/employees/new" class="btn btn-primary">
+        <span class="material-symbols-outlined">person_add</span> Add Employee
+      </a>
+    </div>
+  </div>
+
+  @if (loading()) {
+    <div class="loading-state">
+      <div class="spinner"></div>
+      <p>Loading analytics and metrics...</p>
+    </div>
+  } @else if (error()) {
+    <div class="error-card">
+      <span class="material-symbols-outlined error-icon">warning</span>
+      <h3>Connection Error</h3>
+      <p>{{ error() }}</p>
+      <button class="btn btn-outline" (click)="ngOnInit()">Retry Connection</button>
+    </div>
+  } @else if (stats()) {
+    <!-- KPI Summary Grid -->
+    <div class="stats-grid">
+      <div class="stat-card">
+        <div class="stat-icon-wrapper blue">
+          <span class="material-symbols-outlined">group</span>
+        </div>
+        <div class="stat-content">
+          <p class="stat-label">Total Employees</p>
+          <h3 class="stat-value">{{ stats()?.totalEmployees }}</h3>
+          <p class="stat-desc">Registered in system</p>
+        </div>
+      </div>
+
+      <div class="stat-card">
+        <div class="stat-icon-wrapper green">
+          <span class="material-symbols-outlined">check_circle</span>
+        </div>
+        <div class="stat-content">
+          <p class="stat-label">Active Staff</p>
+          <h3 class="stat-value">{{ stats()?.activeEmployees }}</h3>
+          <p class="stat-desc">{{ stats()?.inactiveEmployees }} inactive / terminated</p>
+        </div>
+      </div>
+
+      <div class="stat-card">
+        <div class="stat-icon-wrapper purple">
+          <span class="material-symbols-outlined">domain</span>
+        </div>
+        <div class="stat-content">
+          <p class="stat-label">Departments</p>
+          <h3 class="stat-value">{{ stats()?.totalDepartments }}</h3>
+          <p class="stat-desc">Active organizational units</p>
+        </div>
+      </div>
+
+      <div class="stat-card">
+        <div class="stat-icon-wrapper orange">
+          <span class="material-symbols-outlined">payments</span>
+        </div>
+        <div class="stat-content">
+          <p class="stat-label">Average Salary</p>
+          <h3 class="stat-value">${{ stats()?.averageSalary | number:'1.0-0' }}</h3>
+          <p class="stat-desc">Per employee yearly rate</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Analytics Row -->
+    <div class="analytics-row">
+      <!-- Department Distribution Chart -->
+      <div class="chart-card">
+        <div class="card-header">
+          <h3>Department Distribution</h3>
+          <span class="material-symbols-outlined text-muted">bar_chart</span>
+        </div>
+        <div class="chart-content">
+          @if (stats()?.departmentStats?.length === 0) {
+            <p class="no-data">No department data available</p>
+          } @else {
+            <div class="bar-chart-list">
+              @for (dept of stats()?.departmentStats; track dept.departmentName) {
+                <div class="bar-chart-item">
+                  <div class="bar-label-row">
+                    <span class="bar-name">{{ dept.departmentName }}</span>
+                    <span class="bar-value">{{ dept.employeeCount }} ({{ getDepartmentPercentage(dept.employeeCount) }}%)</span>
+                  </div>
+                  <div class="bar-track">
+                    <div class="bar-fill" [style.width.%]="getDepartmentPercentage(dept.employeeCount)"></div>
+                  </div>
+                </div>
+              }
+            </div>
+          }
+        </div>
+      </div>
+
+      <!-- Quick Links / Shortcuts -->
+      <div class="shortcuts-card">
+        <div class="card-header">
+          <h3>Quick Administration</h3>
+          <span class="material-symbols-outlined text-muted">bolt</span>
+        </div>
+        <div class="shortcuts-grid">
+          <a routerLink="/employees" class="shortcut-item">
+            <span class="material-symbols-outlined">badge</span>
+            <span>Manage Employees</span>
+          </a>
+          <a routerLink="/departments" class="shortcut-item">
+            <span class="material-symbols-outlined">schema</span>
+            <span>Departments & Roles</span>
+          </a>
+          <a routerLink="/employees/new" class="shortcut-item">
+            <span class="material-symbols-outlined">add_moderator</span>
+            <span>Onboard New Hire</span>
+          </a>
+          <div class="shortcut-info">
+            <h4>Learn C# & Angular</h4>
+            <p>This template showcases REST APIs, CORS, SQLite DB interactions, component styling, and RxJS Services.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Recent Hires -->
+    <div class="recent-hires-card">
+      <div class="card-header">
+        <h3>Recent Joined Employees</h3>
+        <a routerLink="/employees" class="btn btn-text">View Directory <span class="material-symbols-outlined">arrow_right_alt</span></a>
+      </div>
+      <div class="table-container">
+        @if (stats()?.recentHires?.length === 0) {
+          <p class="no-data">No employees in the system yet.</p>
+        } @else {
+          <table class="data-table">
+            <thead>
+              <tr>
+                <th>Employee Name</th>
+                <th>Department</th>
+                <th>Designation</th>
+                <th>Date of Joining</th>
+                <th>Status</th>
+                <th>Action</th>
+              </tr>
+            </thead>
+            <tbody>
+              @for (emp of stats()?.recentHires; track emp.id) {
+                <tr>
+                  <td>
+                    <div class="user-cell">
+                      <div class="avatar">{{ emp.firstName[0] }}{{ emp.lastName[0] }}</div>
+                      <div>
+                        <div class="font-semibold">{{ emp.firstName }} {{ emp.lastName }}</div>
+                        <div class="text-xs text-muted">{{ emp.email }}</div>
+                      </div>
+                    </div>
+                  </td>
+                  <td>{{ emp.departmentName || 'Not Assigned' }}</td>
+                  <td>{{ emp.designationTitle || 'Not Assigned' }}</td>
+                  <td>{{ emp.dateOfJoining | date:'mediumDate' }}</td>
+                  <td>
+                    <span class="badge" [class.badge-active]="emp.status === 'Active'" [class.badge-inactive]="emp.status !== 'Active'">
+                      {{ emp.status }}
+                    </span>
+                  </td>
+                  <td>
+                    <a [routerLink]="['/employees/edit', emp.id]" class="btn-icon" title="Edit Employee">
+                      <span class="material-symbols-outlined text-primary">edit</span>
+                    </a>
+                  </td>
+                </tr>
+              }
+            </tbody>
+          </table>
+        }
+      </div>
+    </div>
+  }
+</div>

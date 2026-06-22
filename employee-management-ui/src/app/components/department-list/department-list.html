@@ -1,0 +1,209 @@
+<div class="org-container">
+  <div class="org-header">
+    <h1>Organizational Management</h1>
+    <p class="subtitle">Maintain departments and designation roles within the company</p>
+  </div>
+
+  <div class="org-split-grid">
+    <!-- LEFT: Departments List -->
+    <div class="org-card">
+      <div class="card-header">
+        <h3>Departments</h3>
+        <span class="material-symbols-outlined text-muted">schema</span>
+      </div>
+
+      <!-- Add Department Form (Inline) -->
+      <div class="inline-form-box">
+        <h4>Create Department</h4>
+        <div class="inline-form-fields">
+          <input 
+            type="text" 
+            [(ngModel)]="newDept.name" 
+            placeholder="Department Name (e.g. Sales)" 
+            class="form-control form-control-sm"
+          />
+          <input 
+            type="text" 
+            [(ngModel)]="newDept.code" 
+            placeholder="Code (e.g. SLS)" 
+            class="form-control form-control-sm uppercase-input"
+            maxlength="10"
+          />
+          <button (click)="addDepartment()" class="btn btn-primary btn-sm" [disabled]="savingDept()">
+            @if (savingDept()) {
+              <div class="spinner spinner-xs"></div>
+            } @else {
+              <span class="material-symbols-outlined">add</span> Create
+            }
+          </button>
+        </div>
+      </div>
+
+      <!-- Departments Table -->
+      @if (loadingDepts()) {
+        <div class="loading-state-sm">
+          <div class="spinner spinner-sm"></div>
+          <p>Loading departments...</p>
+        </div>
+      } @else {
+        <div class="table-container">
+          <table class="data-table data-table-sm">
+            <thead>
+              <tr>
+                <th>Code</th>
+                <th>Department Name</th>
+                <th class="actions-col">Actions</th>
+              </tr>
+            </thead>
+            <tbody>
+              @for (dept of departments(); track dept.id) {
+                <tr [class.selected-row]="selectedDeptId() === dept.id" (click)="selectDepartment(dept.id)">
+                  <td>
+                    @if (editDept?.id === dept.id) {
+                      <input 
+                        type="text" 
+                        [(ngModel)]="editDept!.code" 
+                        class="form-control form-control-sm uppercase-input"
+                        (click)="$event.stopPropagation()"
+                      />
+                    } @else {
+                      <span class="code-badge">{{ dept.code }}</span>
+                    }
+                  </td>
+                  <td>
+                    @if (editDept?.id === dept.id) {
+                      <input 
+                        type="text" 
+                        [(ngModel)]="editDept!.name" 
+                        class="form-control form-control-sm"
+                        (click)="$event.stopPropagation()"
+                      />
+                    } @else {
+                      <span class="font-semibold">{{ dept.name }}</span>
+                    }
+                  </td>
+                  <td class="actions-col" (click)="$event.stopPropagation()">
+                    <div class="actions-cell">
+                      @if (editDept?.id === dept.id) {
+                        <button (click)="saveEditDept()" class="btn-icon text-success" title="Save">
+                          <span class="material-symbols-outlined">check</span>
+                        </button>
+                        <button (click)="cancelEditDept()" class="btn-icon text-muted" title="Cancel">
+                          <span class="material-symbols-outlined">close</span>
+                        </button>
+                      } @else {
+                        <button (click)="startEditDept(dept)" class="btn-icon text-primary" title="Edit">
+                          <span class="material-symbols-outlined">edit</span>
+                        </button>
+                        <button (click)="deleteDepartment(dept.id, dept.name)" class="btn-icon text-danger" title="Delete">
+                          <span class="material-symbols-outlined">delete</span>
+                        </button>
+                      }
+                    </div>
+                  </td>
+                </tr>
+              }
+            </tbody>
+          </table>
+        </div>
+      }
+    </div>
+
+    <!-- RIGHT: Designations / Roles List -->
+    <div class="org-card">
+      <div class="card-header">
+        <h3>Roles in: {{ getSelectedDepartmentName() }}</h3>
+        <span class="material-symbols-outlined text-muted">badge</span>
+      </div>
+
+      @if (selectedDeptId() === null) {
+        <div class="empty-select-state">
+          <span class="material-symbols-outlined large-icon">arrow_back</span>
+          <p>Please select a department from the left panel to manage its designation roles.</p>
+        </div>
+      } @else {
+        <!-- Add Designation Form (Inline) -->
+        <div class="inline-form-box">
+          <h4>Create Designation Role</h4>
+          <div class="inline-form-fields">
+            <input 
+              type="text" 
+              [(ngModel)]="newDesig.title" 
+              placeholder="Designation Title (e.g. Sales Executive)" 
+              class="form-control form-control-sm"
+            />
+            <button (click)="addDesignation()" class="btn btn-primary btn-sm" [disabled]="savingDesig()">
+              @if (savingDesig()) {
+                <div class="spinner spinner-xs"></div>
+              } @else {
+                <span class="material-symbols-outlined">add</span> Add Role
+              }
+            </button>
+          </div>
+        </div>
+
+        <!-- Designations Table -->
+        @if (loadingDesigs()) {
+          <div class="loading-state-sm">
+            <div class="spinner spinner-sm"></div>
+            <p>Loading roles...</p>
+          </div>
+        } @else {
+          <div class="table-container">
+            @if (designations().length === 0) {
+              <div class="no-records-state-sm">
+                <span class="material-symbols-outlined">badge</span>
+                <p>No designation roles created for this department yet.</p>
+              </div>
+            } @else {
+              <table class="data-table data-table-sm">
+                <thead>
+                  <tr>
+                    <th>Designation Title</th>
+                    <th class="actions-col">Actions</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  @for (desig of designations(); track desig.id) {
+                    <tr>
+                      <td>
+                        @if (editDesig?.id === desig.id) {
+                          <input 
+                            type="text" 
+                            [(ngModel)]="editDesig!.title" 
+                            class="form-control form-control-sm"
+                          />
+                        } @else {
+                          <span>{{ desig.title }}</span>
+                        }
+                      </td>
+                      <td class="actions-col">
+                        <div class="actions-cell">
+                          @if (editDesig?.id === desig.id) {
+                            <button (click)="saveEditDesig()" class="btn-icon text-success" title="Save">
+                              <span class="material-symbols-outlined">check</span>
+                            </button>
+                            <button (click)="cancelEditDesig()" class="btn-icon text-muted" title="Cancel">
+                              <span class="material-symbols-outlined">close</span>
+                            </button>
+                          } @else {
+                            <button (click)="startEditDesig(desig)" class="btn-icon text-primary" title="Edit">
+                              <span class="material-symbols-outlined">edit</span>
+                            </button>
+                            <button (click)="deleteDesignation(desig.id, desig.title)" class="btn-icon text-danger" title="Delete">
+                              <span class="material-symbols-outlined">delete</span>
+                            </button>
+                          }
+                        </div>
+                      </td>
+                    </tr>
+                  }
+                </tbody>
+              </table>
+            }
+          </div>
+        }
+      }
+    </div>
+  </div>
+</div>

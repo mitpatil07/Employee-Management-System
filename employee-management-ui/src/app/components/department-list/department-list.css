@@ -1,0 +1,118 @@
+/* Split Org Management Styling */
+.org-container {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.org-split-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1.5rem;
+}
+
+@media (max-width: 900px) {
+  .org-split-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+.org-card {
+  background: var(--bg-card);
+  border: 1px solid var(--border-color);
+  border-radius: 12px;
+  padding: 1.5rem;
+  box-shadow: var(--shadow-sm);
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+}
+
+.inline-form-box {
+  background-color: var(--bg-body);
+  border: 1px solid var(--border-color);
+  border-radius: 8px;
+  padding: 1rem;
+}
+
+.inline-form-box h4 {
+  font-size: 0.8125rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  color: var(--text-muted);
+  margin-bottom: 0.75rem;
+}
+
+.inline-form-fields {
+  display: flex;
+  gap: 0.5rem;
+}
+
+@media (max-width: 600px) {
+  .inline-form-fields {
+    flex-direction: column;
+  }
+}
+
+.uppercase-input {
+  text-transform: uppercase;
+}
+
+.selected-row {
+  background-color: rgba(59, 130, 246, 0.05) !important;
+  border-left: 4px solid var(--primary-color) !important;
+  cursor: pointer;
+}
+
+.selected-row td {
+  font-weight: 500;
+}
+
+.code-badge {
+  background-color: var(--border-color);
+  color: var(--text-main);
+  font-size: 0.75rem;
+  font-weight: 700;
+  padding: 0.25rem 0.5rem;
+  border-radius: 4px;
+  font-family: monospace;
+}
+
+.actions-col {
+  width: 100px;
+  text-align: right;
+}
+
+.empty-select-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  padding: 4rem 2rem;
+  color: var(--text-muted);
+  gap: 1rem;
+}
+
+.empty-select-state p {
+  max-width: 250px;
+  font-size: 0.875rem;
+  line-height: 1.4;
+}
+
+.no-records-state-sm {
+  text-align: center;
+  padding: 2rem;
+  color: var(--text-muted);
+  font-size: 0.875rem;
+}
+
+.loading-state-sm {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.75rem;
+  padding: 2rem;
+  color: var(--text-muted);
+  font-size: 0.875rem;
+}

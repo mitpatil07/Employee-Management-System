@@ -1,0 +1,68 @@
+<div class="app-layout">
+  <!-- SIDEBAR -->
+  <aside class="app-sidebar">
+    <div class="sidebar-brand">
+      <span class="material-symbols-outlined brand-icon">supervisor_account</span>
+      <div>
+        <h2 class="brand-title">Antigravity EMS</h2>
+        <span class="brand-subtitle">Employee System</span>
+      </div>
+    </div>
+
+    <nav class="sidebar-menu">
+      <a routerLink="/dashboard" routerLinkActive="active" class="menu-item">
+        <span class="material-symbols-outlined">dashboard</span>
+        <span class="menu-label">Dashboard</span>
+      </a>
+
+      <a routerLink="/employees" routerLinkActive="active" class="menu-item" [routerLinkActiveOptions]="{exact: false}">
+        <span class="material-symbols-outlined">group</span>
+        <span class="menu-label">Employees</span>
+      </a>
+
+      <a routerLink="/departments" routerLinkActive="active" class="menu-item">
+        <span class="material-symbols-outlined">schema</span>
+        <span class="menu-label">Org Directory</span>
+      </a>
+    </nav>
+
+    <div class="sidebar-footer">
+      <div class="user-profile">
+        <div class="profile-avatar">AD</div>
+        <div class="profile-info">
+          <span class="profile-name">Administrator</span>
+          <span class="profile-role">HR Admin</span>
+        </div>
+      </div>
+    </div>
+  </aside>
+
+  <!-- MAIN CONTENT CONTAINER -->
+  <div class="app-main">
+    <!-- TOPBAR -->
+    <header class="app-topbar">
+      <div class="topbar-search">
+        <span class="material-symbols-outlined text-muted">search</span>
+        <input type="text" placeholder="Global search..." disabled class="topbar-search-input" />
+        <span class="kbd">Ctrl + K</span>
+      </div>
+      
+      <div class="topbar-actions">
+        <button class="topbar-btn" title="Notifications">
+          <span class="material-symbols-outlined">notifications</span>
+          <span class="badge-dot"></span>
+        </button>
+        <button class="topbar-btn" title="Settings">
+          <span class="material-symbols-outlined">settings</span>
+        </button>
+        <div class="divider"></div>
+        <span class="date-badge-top">{{ todayDate | date:'fullDate' }}</span>
+      </div>
+    </header>
+
+    <!-- CONTENT WRAPPER -->
+    <main class="app-content">
+      <router-outlet></router-outlet>
+    </main>
+  </div>
+</div>
